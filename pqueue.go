@@ -59,10 +59,16 @@ func InitQ(length int) *QMan {
 	return qm
 }
 
-func (fm *QMan) Qpush(c *Item) {
+func (fm *QMan) Qpush(c *Item) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = r.(error)
+		}
+	}()
 	fm.mutex.Lock()
 	defer fm.mutex.Unlock()
 	heap.Push(fm.Pq, c)
+	return err
 }
 
 func (fm *QMan) Qpop() *Item {
